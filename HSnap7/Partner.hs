@@ -1,2 +1,1 @@
-module Partner where
-  
+module HSnap7.Partner where

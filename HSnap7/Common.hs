@@ -1,6 +1,4 @@
-{-# LANGUAGE OverloadedStrings #-}
-
-module PLC where
+module HSnap7.Common where
 
 import Foreign.Ptr
 import Foreign.C.Types
@@ -59,6 +57,26 @@ instance Show TOD where
 
 instance Show Time where
   show (Time a) = "T#" ++ show a ++ "ms"
+
+
+
+dtlToSeconds :: DTL -> Integer
+dtlToSeconds dtl =
+  fromIntegral
+  $ yearToSec
+  + monthToSec
+  + dayToSec
+  + hourToSec
+  + minutesToSec
+  + (toInteger (second dtl))
+  where
+    yearToSec = round ((fromIntegral (year dtl) - 1970)  * (31556925.216 :: Double))
+    monthToSec = round ((fromIntegral ((month dtl) * 86400)) * (30.4368499 :: Double))
+    dayToSec = toInteger ((day dtl) * 86400)
+    hourToSec = toInteger ((hour dtl) * 3600)
+    minutesToSec = toInteger ((minute dtl) * 60)
+
+
 
 
 readBool :: DB -> Int -> Int -> IO Bool
@@ -131,11 +149,14 @@ writeByte db offset value = pokeByteOff db offset (fromIntegral value :: Word8)
 
 
 readChar :: DB -> Int -> IO Char
-readChar db offset = peekByteOff db offset
+readChar db offset =
+  toEnum
+  <$> fromIntegral
+  <$> (peekByteOff db offset :: IO CChar)
 
 
 writeChar :: DB -> Int -> Char -> IO ()
-writeChar db offset value = pokeByteOff db offset value
+writeChar db offset value = pokeByteOff db offset (fromIntegral $ fromEnum $ value :: CChar)
 
 
 readWord :: DB -> Int -> IO Int

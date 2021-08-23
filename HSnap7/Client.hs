@@ -10,7 +10,7 @@
 -- treat thread safety
 --}
 
-module Client where
+module HSnap7.Client where
 
 import Foreign.Ptr
 import Foreign.C.Types
@@ -18,7 +18,7 @@ import Foreign.C.String
 import Foreign.Storable
 import Foreign.Marshal.Alloc
 
-import PLC
+import HSnap7.Common
 
 -- snap7. high level functions --
 
